@@ -48,7 +48,7 @@ async function seedClients() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/pedro.jpg',
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
       },
       {
         name: 'Ana Costa',
@@ -62,7 +62,7 @@ async function seedClients() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/ana.jpg',
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
       },
       {
         name: 'Carlos Ferreira',

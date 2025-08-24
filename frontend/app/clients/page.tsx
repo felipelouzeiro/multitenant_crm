@@ -12,6 +12,7 @@ import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { toast } from 'react-hot-toast'
 import { Plus, Edit, Trash2, Search } from 'lucide-react'
+import { validateClient, validateClientEdit, ValidationErrors } from '@/lib/validation'
 
 interface Client {
   id: string
@@ -38,6 +39,19 @@ export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
+  const [newClient, setNewClient] = useState({
+    name: '',
+    email: '',
+    contact: '',
+    isActive: true,
+    address: {
+      street: '',
+      neighborhood: '',
+      number: '',
+      state: ''
+    }
+  })
+  const [errors, setErrors] = useState<ValidationErrors>({})
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -68,15 +82,59 @@ export default function ClientsPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Client> }) => {
+      const validationErrors = validateClientEdit({
+        name: data.name || '',
+        email: data.email || '',
+        contact: data.contact || '',
+        address: data.address || { street: '', neighborhood: '', number: '', state: '' }
+      })
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        throw new Error('Validação falhou')
+      }
+      setErrors({})
       await api.patch(`/clients/${id}`, data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] })
       toast.success('Cliente atualizado com sucesso!')
       setEditingClient(null)
+      setErrors({})
     },
-    onError: () => {
-      toast.error('Erro ao atualizar cliente')
+    onError: (error) => {
+      if (error.message !== 'Validação falhou') {
+        toast.error('Erro ao atualizar cliente')
+      }
+    },
+  })
+
+  const createMutation = useMutation({
+    mutationFn: async (clientData: typeof newClient) => {
+      const validationErrors = validateClient(clientData)
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        throw new Error('Validação falhou')
+      }
+      setErrors({})
+      await api.post('/clients', clientData)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      toast.success('Cliente criado com sucesso!')
+      setShowCreateModal(false)
+      setNewClient({
+        name: '',
+        email: '',
+        contact: '',
+        isActive: true,
+        address: { street: '', neighborhood: '', number: '', state: '' }
+      })
+      setErrors({})
+    },
+    onError: (error) => {
+      if (error.message !== 'Validação falhou') {
+        toast.error('Erro ao criar cliente')
+      }
     },
   })
 
@@ -203,6 +261,193 @@ export default function ClientsPage() {
               </div>
             )}
 
+            {/* Modal de Criação */}
+            {showCreateModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                  <h3 className="text-lg font-semibold mb-4">Criar Novo Cliente</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome
+                      </label>
+                                             <Input
+                         value={newClient.name}
+                         onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+                         placeholder="Digite o nome"
+                         className={errors.name ? 'border-red-500' : ''}
+                       />
+                       {errors.name && (
+                         <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                                             <Input
+                         type="email"
+                         value={newClient.email}
+                         onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                         placeholder="Digite o email"
+                         className={errors.email ? 'border-red-500' : ''}
+                       />
+                       {errors.email && (
+                         <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contato
+                      </label>
+                                             <Input
+                         value={newClient.contact}
+                         onChange={(e) => setNewClient({ ...newClient, contact: e.target.value })}
+                         placeholder="Digite o contato"
+                         className={errors.contact ? 'border-red-500' : ''}
+                       />
+                       {errors.contact && (
+                         <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Rua
+                      </label>
+                                             <Input
+                         value={newClient.address.street}
+                         onChange={(e) => setNewClient({ 
+                           ...newClient, 
+                           address: { ...newClient.address, street: e.target.value }
+                         })}
+                         placeholder="Digite a rua"
+                         className={errors.street ? 'border-red-500' : ''}
+                       />
+                       {errors.street && (
+                         <p className="text-red-500 text-xs mt-1">{errors.street}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Número
+                      </label>
+                                             <Input
+                         value={newClient.address.number}
+                         onChange={(e) => setNewClient({ 
+                           ...newClient, 
+                           address: { ...newClient.address, number: e.target.value }
+                         })}
+                         placeholder="Digite o número"
+                         className={errors.number ? 'border-red-500' : ''}
+                       />
+                       {errors.number && (
+                         <p className="text-red-500 text-xs mt-1">{errors.number}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Bairro
+                      </label>
+                                             <Input
+                         value={newClient.address.neighborhood}
+                         onChange={(e) => setNewClient({ 
+                           ...newClient, 
+                           address: { ...newClient.address, neighborhood: e.target.value }
+                         })}
+                         placeholder="Digite o bairro"
+                         className={errors.neighborhood ? 'border-red-500' : ''}
+                       />
+                       {errors.neighborhood && (
+                         <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Estado
+                      </label>
+                                             <select
+                         value={newClient.address.state}
+                         onChange={(e) => setNewClient({ 
+                           ...newClient, 
+                           address: { ...newClient.address, state: e.target.value }
+                         })}
+                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                           errors.state ? 'border-red-500' : 'border-gray-300'
+                         }`}
+                       >
+                         <option value="">Selecione o estado</option>
+                         <option value="AC">Acre</option>
+                         <option value="AL">Alagoas</option>
+                         <option value="AP">Amapá</option>
+                         <option value="AM">Amazonas</option>
+                         <option value="BA">Bahia</option>
+                         <option value="CE">Ceará</option>
+                         <option value="DF">Distrito Federal</option>
+                         <option value="ES">Espírito Santo</option>
+                         <option value="GO">Goiás</option>
+                         <option value="MA">Maranhão</option>
+                         <option value="MT">Mato Grosso</option>
+                         <option value="MS">Mato Grosso do Sul</option>
+                         <option value="MG">Minas Gerais</option>
+                         <option value="PA">Pará</option>
+                         <option value="PB">Paraíba</option>
+                         <option value="PR">Paraná</option>
+                         <option value="PE">Pernambuco</option>
+                         <option value="PI">Piauí</option>
+                         <option value="RJ">Rio de Janeiro</option>
+                         <option value="RN">Rio Grande do Norte</option>
+                         <option value="RS">Rio Grande do Sul</option>
+                         <option value="RO">Rondônia</option>
+                         <option value="RR">Roraima</option>
+                         <option value="SC">Santa Catarina</option>
+                         <option value="SP">São Paulo</option>
+                         <option value="SE">Sergipe</option>
+                         <option value="TO">Tocantins</option>
+                       </select>
+                       {errors.state && (
+                         <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={newClient.isActive}
+                          onChange={(e) => setNewClient({ ...newClient, isActive: e.target.checked })}
+                          className="mr-2"
+                        />
+                        <span className="text-sm font-medium text-gray-700">Ativo</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                                         <Button
+                       onClick={() => createMutation.mutate(newClient)}
+                       disabled={createMutation.isPending}
+                     >
+                      {createMutation.isPending ? 'Criando...' : 'Criar Cliente'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowCreateModal(false)
+                        setNewClient({
+                          name: '',
+                          email: '',
+                          contact: '',
+                          isActive: true,
+                          address: { street: '', neighborhood: '', number: '', state: '' }
+                        })
+                      }}
+                      disabled={createMutation.isPending}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Modal de Edição */}
             {editingClient && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -213,76 +458,135 @@ export default function ClientsPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Nome
                       </label>
-                      <Input
-                        value={editingClient.name}
-                        onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
-                      />
+                                             <Input
+                         value={editingClient.name}
+                         onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
+                         className={errors.name ? 'border-red-500' : ''}
+                       />
+                       {errors.name && (
+                         <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Email
                       </label>
-                      <Input
-                        value={editingClient.email}
-                        onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
-                      />
+                                             <Input
+                         value={editingClient.email}
+                         onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
+                         className={errors.email ? 'border-red-500' : ''}
+                       />
+                       {errors.email && (
+                         <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Contato
                       </label>
-                      <Input
-                        value={editingClient.contact}
-                        onChange={(e) => setEditingClient({ ...editingClient, contact: e.target.value })}
-                      />
+                                             <Input
+                         value={editingClient.contact}
+                         onChange={(e) => setEditingClient({ ...editingClient, contact: e.target.value })}
+                         className={errors.contact ? 'border-red-500' : ''}
+                       />
+                       {errors.contact && (
+                         <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Rua
                       </label>
-                      <Input
-                        value={editingClient.address.street}
-                        onChange={(e) => setEditingClient({ 
-                          ...editingClient, 
-                          address: { ...editingClient.address, street: e.target.value }
-                        })}
-                      />
+                                             <Input
+                         value={editingClient.address.street}
+                         onChange={(e) => setEditingClient({ 
+                           ...editingClient, 
+                           address: { ...editingClient.address, street: e.target.value }
+                         })}
+                         className={errors.street ? 'border-red-500' : ''}
+                       />
+                       {errors.street && (
+                         <p className="text-red-500 text-xs mt-1">{errors.street}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Número
                       </label>
-                      <Input
-                        value={editingClient.address.number}
-                        onChange={(e) => setEditingClient({ 
-                          ...editingClient, 
-                          address: { ...editingClient.address, number: e.target.value }
-                        })}
-                      />
+                                             <Input
+                         value={editingClient.address.number}
+                         onChange={(e) => setEditingClient({ 
+                           ...editingClient, 
+                           address: { ...editingClient.address, number: e.target.value }
+                         })}
+                         className={errors.number ? 'border-red-500' : ''}
+                       />
+                       {errors.number && (
+                         <p className="text-red-500 text-xs mt-1">{errors.number}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Bairro
                       </label>
-                      <Input
-                        value={editingClient.address.neighborhood}
-                        onChange={(e) => setEditingClient({ 
-                          ...editingClient, 
-                          address: { ...editingClient.address, neighborhood: e.target.value }
-                        })}
-                      />
+                                             <Input
+                         value={editingClient.address.neighborhood}
+                         onChange={(e) => setEditingClient({ 
+                           ...editingClient, 
+                           address: { ...editingClient.address, neighborhood: e.target.value }
+                         })}
+                         className={errors.neighborhood ? 'border-red-500' : ''}
+                       />
+                       {errors.neighborhood && (
+                         <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Estado
                       </label>
-                      <Input
-                        value={editingClient.address.state}
-                        onChange={(e) => setEditingClient({ 
-                          ...editingClient, 
-                          address: { ...editingClient.address, state: e.target.value }
-                        })}
-                      />
+                                             <select
+                         value={editingClient.address.state}
+                         onChange={(e) => setEditingClient({ 
+                           ...editingClient, 
+                           address: { ...editingClient.address, state: e.target.value }
+                         })}
+                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                           errors.state ? 'border-red-500' : 'border-gray-300'
+                         }`}
+                       >
+                         <option value="">Selecione o estado</option>
+                         <option value="AC">Acre</option>
+                         <option value="AL">Alagoas</option>
+                         <option value="AP">Amapá</option>
+                         <option value="AM">Amazonas</option>
+                         <option value="BA">Bahia</option>
+                         <option value="CE">Ceará</option>
+                         <option value="DF">Distrito Federal</option>
+                         <option value="ES">Espírito Santo</option>
+                         <option value="GO">Goiás</option>
+                         <option value="MA">Maranhão</option>
+                         <option value="MT">Mato Grosso</option>
+                         <option value="MS">Mato Grosso do Sul</option>
+                         <option value="MG">Minas Gerais</option>
+                         <option value="PA">Pará</option>
+                         <option value="PB">Paraíba</option>
+                         <option value="PR">Paraná</option>
+                         <option value="PE">Pernambuco</option>
+                         <option value="PI">Piauí</option>
+                         <option value="RJ">Rio de Janeiro</option>
+                         <option value="RN">Rio Grande do Norte</option>
+                         <option value="RS">Rio Grande do Sul</option>
+                         <option value="RO">Rondônia</option>
+                         <option value="RR">Roraima</option>
+                         <option value="SC">Santa Catarina</option>
+                         <option value="SP">São Paulo</option>
+                         <option value="SE">Sergipe</option>
+                         <option value="TO">Tocantins</option>
+                       </select>
+                       {errors.state && (
+                         <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                       )}
                     </div>
                     <div>
                       <label className="flex items-center">

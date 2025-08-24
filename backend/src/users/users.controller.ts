@@ -28,7 +28,8 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Criar usuário (apenas ADMIN)' })
   @ApiResponse({ status: 201, description: 'Usuário criado com sucesso' })
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto, @Req() req) {
+    createUserDto.tenantId = req.user.tenantId;
     return this.usersService.create(createUserDto);
   }
 

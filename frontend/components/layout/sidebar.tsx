@@ -7,7 +7,7 @@ import { BarChart3, Users, UserCheck, Settings } from 'lucide-react'
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
   { name: 'Clientes', href: '/clients', icon: Users },
-  { name: 'Usuários', href: '/users', icon: UserCheck, adminOnly: true },
+  { name: 'Usuários', href: '/users', icon: UserCheck, adminOrUser: true },
 ]
 
 export function Sidebar() {
@@ -15,9 +15,12 @@ export function Sidebar() {
   const router = useRouter()
   const pathname = usePathname()
 
-  const filteredNavigation = navigation.filter(item => 
-    !item.adminOnly || user?.role === 'ADMIN'
-  )
+  const filteredNavigation = navigation.filter(item => {
+    if (item.adminOrUser) {
+      return user?.role === 'ADMIN' || user?.role === 'USER'
+    }
+    return true
+  })
 
   return (
     <div className="w-64 bg-white shadow-sm border-r border-gray-200">

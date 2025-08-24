@@ -20,7 +20,8 @@ export class CreateUserDto {
   @IsEnum(UserRole)
   role: UserRole;
 
-  @ApiProperty({ example: 'tenant-123' })
+  @ApiProperty({ example: 'tenant-123', required: false })
   @IsString()
-  tenantId: string;
+  @IsOptional()
+  tenantId?: string;
 }

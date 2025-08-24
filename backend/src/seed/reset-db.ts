@@ -35,6 +35,13 @@ async function resetDatabase() {
         tenantId: 'tenant-1',
       },
       {
+        name: 'Usuário Normal 2',
+        email: 'user2@example.com',
+        password: 'user2123',
+        role: UserRole.USER,
+        tenantId: 'tenant-2',
+      },
+      {
         name: 'Convidado',
         email: 'guest@example.com',
         password: 'guest123',
@@ -61,7 +68,7 @@ async function resetDatabase() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/joao.jpg',
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
       },
       {
         name: 'Maria Santos',
@@ -103,7 +110,7 @@ async function resetDatabase() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/ana.jpg',
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
       },
       {
         name: 'Carlos Ferreira',

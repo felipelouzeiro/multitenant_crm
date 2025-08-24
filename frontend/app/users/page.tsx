@@ -12,6 +12,7 @@ import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { toast } from 'react-hot-toast'
 import { Plus, Edit, Trash2, Shield } from 'lucide-react'
+import { validateUser, ValidationErrors } from '@/lib/validation'
 
 interface User {
   id: string
@@ -29,6 +30,14 @@ export default function UsersPage() {
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState('')
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'USER' as 'ADMIN' | 'USER' | 'GUEST'
+  })
+  const [errors, setErrors] = useState<ValidationErrors>({})
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -59,15 +68,53 @@ export default function UsersPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
+      const validationErrors = validateUser({
+        name: data.name || '',
+        email: data.email || '',
+        password: '',
+        role: data.role || 'USER'
+      }, true)
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        throw new Error('Validação falhou')
+      }
+      setErrors({})
       await api.patch(`/users/${id}`, data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
       toast.success('Usuário atualizado com sucesso!')
       setEditingUser(null)
+      setErrors({})
     },
-    onError: () => {
-      toast.error('Erro ao atualizar usuário')
+    onError: (error) => {
+      if (error.message !== 'Validação falhou') {
+        toast.error('Erro ao atualizar usuário')
+      }
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (userData: typeof newUser) => {
+      const validationErrors = validateUser(userData)
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        throw new Error('Validação falhou')
+      }
+      setErrors({})
+      await api.post('/users', userData)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success('Usuário criado com sucesso!')
+      setShowCreateModal(false)
+      setNewUser({ name: '', email: '', password: '', role: 'USER' })
+      setErrors({})
+    },
+    onError: (error) => {
+      if (error.message !== 'Validação falhou') {
+        toast.error('Erro ao criar usuário')
+      }
     },
   });
 
@@ -111,7 +158,7 @@ export default function UsersPage() {
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-gray-900">Usuários</h1>
               {user.role === 'ADMIN' && (
-                <Button onClick={() => toast('Funcionalidade de criação em desenvolvimento')}>
+                <Button onClick={() => setShowCreateModal(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Usuário
                 </Button>
@@ -201,6 +248,101 @@ export default function UsersPage() {
               </div>
             )}
 
+            {/* Modal de Criação */}
+            {showCreateModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                  <h3 className="text-lg font-semibold mb-4">Criar Novo Usuário</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome
+                      </label>
+                                             <Input
+                         value={newUser.name}
+                         onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                         placeholder="Digite o nome"
+                         className={errors.name ? 'border-red-500' : ''}
+                       />
+                       {errors.name && (
+                         <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                                             <Input
+                         type="email"
+                         value={newUser.email}
+                         onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                         placeholder="Digite o email"
+                         className={errors.email ? 'border-red-500' : ''}
+                       />
+                       {errors.email && (
+                         <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Senha
+                      </label>
+                                             <Input
+                         type="password"
+                         value={newUser.password}
+                         onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                         placeholder="Digite a senha"
+                         className={errors.password ? 'border-red-500' : ''}
+                       />
+                       {errors.password && (
+                         <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Role
+                      </label>
+                                             <select
+                         value={newUser.role}
+                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value as any })}
+                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                           errors.role ? 'border-red-500' : 'border-gray-300'
+                         }`}
+                       >
+                         <option value="ADMIN">ADMIN</option>
+                         <option value="USER">USER</option>
+                         <option value="GUEST">GUEST</option>
+                       </select>
+                       {errors.role && (
+                         <p className="text-red-500 text-xs mt-1">{errors.role}</p>
+                       )}
+                       {errors.role && (
+                         <p className="text-red-500 text-xs mt-1">{errors.role}</p>
+                       )}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                                         <Button
+                       onClick={() => createMutation.mutate(newUser)}
+                       disabled={createMutation.isPending}
+                     >
+                      {createMutation.isPending ? 'Criando...' : 'Criar Usuário'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowCreateModal(false)
+                        setNewUser({ name: '', email: '', password: '', role: 'USER' })
+                      }}
+                      disabled={createMutation.isPending}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Modal de Edição */}
             {editingUser && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -211,29 +353,39 @@ export default function UsersPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Nome
                       </label>
-                      <Input
-                        value={editingUser.name}
-                        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                      />
+                                             <Input
+                         value={editingUser.name}
+                         onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                         className={errors.name ? 'border-red-500' : ''}
+                       />
+                       {errors.name && (
+                         <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Email
                       </label>
-                      <Input
-                        value={editingUser.email}
-                        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                      />
+                                             <Input
+                         value={editingUser.email}
+                         onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                         className={errors.email ? 'border-red-500' : ''}
+                       />
+                       {errors.email && (
+                         <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Role
                       </label>
-                      <select
-                        value={editingUser.role}
-                        onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      >
+                                             <select
+                         value={editingUser.role}
+                         onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
+                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                           errors.role ? 'border-red-500' : 'border-gray-300'
+                         }`}
+                       >
                         <option value="ADMIN">ADMIN</option>
                         <option value="USER">USER</option>
                         <option value="GUEST">GUEST</option>
