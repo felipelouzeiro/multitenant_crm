@@ -3,9 +3,9 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: fullstack-challenge-db-prod
+    container_name: fullstack-db-prod
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-fullstack_challenge}
+      POSTGRES_DB: ${DB_DATABASE:-fullstack_crm}
       POSTGRES_USER: ${DB_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
@@ -20,14 +20,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: fullstack-challenge-backend-prod
+    container_name: fullstack-backend-prod
     environment:
       NODE_ENV: production
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-password}
-      DB_DATABASE: ${DB_DATABASE:-fullstack_challenge}
+      DB_DATABASE: ${DB_DATABASE:-fullstack_crm}
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
     ports:
@@ -42,7 +42,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: fullstack-challenge-frontend-prod
+    container_name: fullstack-frontend-prod
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
     ports:

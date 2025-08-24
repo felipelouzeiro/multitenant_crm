@@ -1,4 +1,4 @@
-# 🚀 Início Rápido - Fullstack Tech Challenge
+# 🚀 Início Rápido - NN Fullstack App Nest-Next
 
 ## Execução Rápida com Docker
 
@@ -59,7 +59,6 @@ docker-compose exec backend npm run seed
 ## Estrutura do Projeto
 
 ```
-fullstask-tech-desafio/
 ├── backend/                 # API NestJS
 ├── frontend/               # Aplicação NextJS
 ├── scripts/                # Scripts de setup
@@ -88,6 +87,23 @@ fullstask-tech-desafio/
 3. Teste as funcionalidades de CRUD
 4. Verifique as permissões por role
 5. Consulte a documentação da API no Swagger
+
+## 👤 **Credenciais de Teste**
+
+### **🏢 ACME (tenant-1)**
+- **Admin**: admin@acme.com / admin123
+- **User**: user@acme.com / user123
+- **Guest**: guest@acme.com / guest123
+
+### **🏢 GLOBEX (tenant-2)**
+- **Admin**: admin@globex.com / admin123
+- **User**: user@globex.com / user123
+- **Guest**: guest@globex.com / guest123
+
+### **🏢 INITECH (tenant-3)**
+- **Admin**: admin@initech.com / admin123
+- **User**: user@initech.com / user123
+- **Guest**: guest@initech.com / guest123
 
 ---
 

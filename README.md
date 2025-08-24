@@ -1,6 +1,6 @@
-# 🚀 Fullstack Tech Challenge
+# 🚀 MultiTenant CRM
 
-Aplicação fullstack completa com **multitenancy**, **RBAC** e **Docker** para o desafio técnico.
+Sistema CRM completo com **multitenancy**, **RBAC** e **Docker**.
 
 ## 🏗️ **Arquitetura**
 
@@ -12,42 +12,24 @@ Aplicação fullstack completa com **multitenancy**, **RBAC** e **Docker** para 
 - **Multitenancy**: Isolamento completo por tenant
 - **RBAC**: ADMIN, USER, GUEST roles
 
-## 🐳 **Docker Setup (Recomendado)**
+## 🚀 **Como Executar**
 
 ### **Pré-requisitos**
 - Docker Desktop instalado
 - Docker Compose instalado
 
-### **Setup Rápido**
-
-#### **Windows (PowerShell)**
-```powershell
-.\scripts\setup-docker.ps1
-```
-
-#### **Linux/Mac (Bash)**
-```bash
-chmod +x scripts/setup-docker.sh
-./scripts/setup-docker.sh
-```
-
-#### **Manual**
+### **Execução Rápida**
 ```bash
 # Construir e iniciar containers
 docker-compose up --build -d
 
 # Verificar status
 docker-compose ps
-
-# Ver logs
-docker-compose logs -f backend
-docker-compose logs -f frontend
 ```
 
 ### **Acesso**
 - **Frontend**: http://localhost:3000
 - **Backend**: http://localhost:3001
-- **Database**: localhost:5432
 
 ## 👤 **Usuários de Teste**
 
@@ -65,6 +47,8 @@ docker-compose logs -f frontend
 - **Admin**: admin@initech.com / admin123
 - **User**: user@initech.com / user123
 - **Guest**: guest@initech.com / guest123
+
+> **💡 Dica**: Teste o multitenancy fazendo login com diferentes tenants e observe o isolamento dos dados.
 
 ## 🔐 **Funcionalidades**
 
@@ -86,7 +70,12 @@ docker-compose logs -f frontend
 - ✅ Busca e filtros
 - ✅ Dashboard com KPIs
 
-## 🛠️ **Desenvolvimento Local**
+## 🔧 **Configuração**
+
+### **Variáveis de Ambiente**
+Os arquivos `.env` são configurados automaticamente pelo Docker Compose.
+
+## 🛠️ **Desenvolvimento**
 
 ### **Backend**
 ```bash
@@ -102,17 +91,9 @@ npm install
 npm run dev
 ```
 
-### **Database**
-```bash
-# Reset do banco
-cd backend
-npm run reset:db
-```
-
 ## 📁 **Estrutura do Projeto**
 
 ```
-fullstack-tech-challenge/
 ├── backend/                 # NestJS API
 │   ├── src/
 │   │   ├── auth/           # Autenticação JWT
@@ -134,40 +115,29 @@ fullstack-tech-challenge/
 └── README.md
 ```
 
-## 🚀 **Deploy**
-
-### **Vercel (Frontend)**
-- Configurado para build standalone
-- Variáveis de ambiente para API URL
-
-### **Render (Backend)**
-- PostgreSQL add-on
-- Build automático do Docker
-
 ## 🔧 **Comandos Úteis**
 
 ```bash
 # Docker
-docker-compose up -d          # Iniciar containers
-docker-compose down           # Parar containers
-docker-compose restart        # Reiniciar containers
-docker-compose logs -f        # Ver logs
+docker-compose up -d        # Iniciar containers
+docker-compose down         # Parar containers
+docker-compose logs -f      # Ver logs
 
 # Backend
-npm run start:dev            # Desenvolvimento
-npm run build               # Build produção
-npm run reset:db            # Reset banco
+npm run start:dev          # Desenvolvimento
+npm run build             # Build produção
+npm run reset:db          # Reset banco
 
 # Frontend
-npm run dev                 # Desenvolvimento
-npm run build              # Build produção
+npm run dev               # Desenvolvimento
+npm run build            # Build produção
 ```
 
 ## 📊 **Dashboard**
 
 - Total de clientes por tenant
 - Clientes ativos por tenant
-- Gráficos e estatísticas
+- KPIs e estatísticas
 
 ## 🔒 **Segurança**
 
@@ -178,15 +148,14 @@ npm run build              # Build produção
 - ✅ RBAC implementado
 - ✅ CORS configurado
 
-## 🎯 **Próximos Passos**
+## 🎯 **Tecnologias**
 
-- [ ] Testes automatizados
-- [ ] CI/CD pipeline
-- [ ] Monitoramento e logs
-- [ ] Backup automático
-- [ ] Rate limiting
-- [ ] Documentação API (Swagger)
+- **Frontend**: NextJS 14, TypeScript, TailwindCSS, React Query
+- **Backend**: NestJS, TypeScript, TypeORM, PostgreSQL
+- **Autenticação**: JWT, Passport
+- **Containerização**: Docker, Docker Compose
+- **Deploy**: Vercel (Frontend), Render (Backend)
 
 ---
 
-**Desenvolvido com ❤️ para o desafio técnico fullstack**
+**MultiTenant CRM System**

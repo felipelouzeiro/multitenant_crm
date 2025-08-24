@@ -33,6 +33,6 @@ services:
 
 databases:
   - name: fullstack-postgres
-    databaseName: fullstack_challenge
+               databaseName: multitenant_crm
     user: fullstack_user
     plan: free

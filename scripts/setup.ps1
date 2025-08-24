@@ -1,4 +1,4 @@
-Write-Host "🚀 Iniciando setup do Fullstack Tech Challenge..." -ForegroundColor Green
+Write-Host "🚀 Iniciando setup do Fullstack Tech CRM..." -ForegroundColor Green
 
 # Verificar se o Docker está instalado
 try {

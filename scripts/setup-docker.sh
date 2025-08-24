@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🐳 Iniciando setup do Fullstack Tech Challenge com Docker..."
+echo "🐳 Iniciando setup do Fullstack Tech CRM com Docker..."
 
 # Verificar se o Docker está instalado
 if ! command -v docker &> /dev/null; then

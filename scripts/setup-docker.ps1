@@ -1,4 +1,4 @@
-Write-Host "🐳 Iniciando setup do Fullstack Tech Challenge com Docker..." -ForegroundColor Green
+Write-Host "🐳 Iniciando setup do Fullstack Tech CRM com Docker..." -ForegroundColor Green
 
 # Verificar se o Docker está instalado
 if (!(Get-Command docker -ErrorAction SilentlyContinue)) {

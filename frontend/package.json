@@ -1,5 +1,5 @@
 {
-  "name": "fullstack-tech-challenge-frontend",
+  "name": "multitenant-crm-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {

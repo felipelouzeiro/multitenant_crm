@@ -14,7 +14,7 @@ export function Header() {
           <div className="flex items-center">
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                Fullstack Tech Challenge
+                MultiTenant CRM
               </h1>
               {user?.tenantName && (
                 <p className="text-sm text-gray-500">

@@ -1,7 +1,7 @@
 {
-  "name": "fullstack-tech-challenge-backend",
+  "name": "multitenant-crm-backend",
   "version": "1.0.0",
-  "description": "Backend para o desafio técnico fullstack",
+  "description": "Backend para sistema CRM multitenancy com RBAC",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -24,7 +24,7 @@
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
-    "postinstall": "npm run migration:run && npm run seed"
+    "postinstall": "echo 'Skipping postinstall in Docker build'"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

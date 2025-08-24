@@ -23,8 +23,8 @@ async function bootstrap() {
 
   // Configuração do Swagger
   const config = new DocumentBuilder()
-    .setTitle('Fullstack Tech Challenge API')
-    .setDescription('API para o desafio técnico fullstack')
+    .setTitle('Fullstack Tech CRM API')
+    .setDescription('API para o CRM fullstack')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
