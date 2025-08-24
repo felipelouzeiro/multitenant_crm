@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { toast } from 'react-hot-toast'
-import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react'
+import { Plus, Edit, Trash2, Search } from 'lucide-react'
 
 interface Client {
   id: string
@@ -63,6 +63,20 @@ export default function ClientsPage() {
     },
     onError: () => {
       toast.error('Erro ao remover cliente')
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Client> }) => {
+      await api.patch(`/clients/${id}`, data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      toast.success('Cliente atualizado com sucesso!')
+      setEditingClient(null)
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar cliente')
     },
   })
 
@@ -136,13 +150,6 @@ export default function ClientsPage() {
                           <CardDescription>{client.email}</CardDescription>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingClient(client)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
                           {(user.role === 'ADMIN' || user.role === 'USER') && (
                             <>
                               <Button
@@ -193,6 +200,127 @@ export default function ClientsPage() {
             {filteredClients.length === 0 && !loadingClients && (
               <div className="text-center py-12">
                 <p className="text-gray-500">Nenhum cliente encontrado.</p>
+              </div>
+            )}
+
+            {/* Modal de Edição */}
+            {editingClient && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                  <h3 className="text-lg font-semibold mb-4">Editar Cliente</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome
+                      </label>
+                      <Input
+                        value={editingClient.name}
+                        onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <Input
+                        value={editingClient.email}
+                        onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contato
+                      </label>
+                      <Input
+                        value={editingClient.contact}
+                        onChange={(e) => setEditingClient({ ...editingClient, contact: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Rua
+                      </label>
+                      <Input
+                        value={editingClient.address.street}
+                        onChange={(e) => setEditingClient({ 
+                          ...editingClient, 
+                          address: { ...editingClient.address, street: e.target.value }
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Número
+                      </label>
+                      <Input
+                        value={editingClient.address.number}
+                        onChange={(e) => setEditingClient({ 
+                          ...editingClient, 
+                          address: { ...editingClient.address, number: e.target.value }
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Bairro
+                      </label>
+                      <Input
+                        value={editingClient.address.neighborhood}
+                        onChange={(e) => setEditingClient({ 
+                          ...editingClient, 
+                          address: { ...editingClient.address, neighborhood: e.target.value }
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Estado
+                      </label>
+                      <Input
+                        value={editingClient.address.state}
+                        onChange={(e) => setEditingClient({ 
+                          ...editingClient, 
+                          address: { ...editingClient.address, state: e.target.value }
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={editingClient.isActive}
+                          onChange={(e) => setEditingClient({ ...editingClient, isActive: e.target.checked })}
+                          className="mr-2"
+                        />
+                        <span className="text-sm font-medium text-gray-700">Ativo</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                    <Button
+                      onClick={() => updateMutation.mutate({ 
+                        id: editingClient.id, 
+                        data: { 
+                          name: editingClient.name, 
+                          email: editingClient.email,
+                          contact: editingClient.contact,
+                          address: editingClient.address,
+                          isActive: editingClient.isActive
+                        } 
+                      })}
+                      disabled={updateMutation.isPending}
+                    >
+                      {updateMutation.isPending ? 'Salvando...' : 'Salvar'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setEditingClient(null)}
+                      disabled={updateMutation.isPending}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

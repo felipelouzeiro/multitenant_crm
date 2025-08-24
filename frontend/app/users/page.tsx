@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { toast } from 'react-hot-toast'
-import { Plus, Edit, Trash2, Eye, Shield } from 'lucide-react'
+import { Plus, Edit, Trash2, Shield } from 'lucide-react'
 
 interface User {
   id: string
@@ -28,6 +28,7 @@ export default function UsersPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState('')
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -53,6 +54,20 @@ export default function UsersPage() {
     },
     onError: () => {
       toast.error('Erro ao remover usuário')
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
+      await api.patch(`/users/${id}`, data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success('Usuário atualizado com sucesso!')
+      setEditingUser(null)
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar usuário')
     },
   });
 
@@ -139,19 +154,13 @@ export default function UsersPage() {
                           <CardDescription>{userItem.email}</CardDescription>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toast('Funcionalidade de visualização em desenvolvimento')}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+
                           {user.role === 'ADMIN' && (
                             <>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => toast('Funcionalidade de edição em desenvolvimento')}
+                                onClick={() => setEditingUser(userItem)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -189,6 +198,71 @@ export default function UsersPage() {
             {filteredUsers.length === 0 && !loadingUsers && (
               <div className="text-center py-12">
                 <p className="text-gray-500">Nenhum usuário encontrado.</p>
+              </div>
+            )}
+
+            {/* Modal de Edição */}
+            {editingUser && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                  <h3 className="text-lg font-semibold mb-4">Editar Usuário</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome
+                      </label>
+                      <Input
+                        value={editingUser.name}
+                        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <Input
+                        value={editingUser.email}
+                        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Role
+                      </label>
+                      <select
+                        value={editingUser.role}
+                        onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="USER">USER</option>
+                        <option value="GUEST">GUEST</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                    <Button
+                      onClick={() => updateMutation.mutate({ 
+                        id: editingUser.id, 
+                        data: { 
+                          name: editingUser.name, 
+                          email: editingUser.email, 
+                          role: editingUser.role 
+                        } 
+                      })}
+                      disabled={updateMutation.isPending}
+                    >
+                      {updateMutation.isPending ? 'Salvando...' : 'Salvar'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setEditingUser(null)}
+                      disabled={updateMutation.isPending}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

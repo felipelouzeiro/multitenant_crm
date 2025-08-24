@@ -33,7 +33,8 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar usuários' })
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  @ApiOperation({ summary: 'Listar usuários (ADMIN e USER)' })
   @ApiResponse({ status: 200, description: 'Lista de usuários' })
   findAll(@Req() req) {
     return this.usersService.findAll(req.user.tenantId);

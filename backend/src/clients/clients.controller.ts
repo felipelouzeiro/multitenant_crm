@@ -34,7 +34,8 @@ export class ClientsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar clientes' })
+  @Roles(UserRole.ADMIN, UserRole.USER, UserRole.GUEST)
+  @ApiOperation({ summary: 'Listar clientes (todos os roles)' })
   @ApiResponse({ status: 200, description: 'Lista de clientes' })
   findAll(@Req() req) {
     return this.clientsService.findAll(req.user.tenantId);
