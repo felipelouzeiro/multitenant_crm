@@ -19,6 +19,19 @@ Sistema CRM completo com **multitenancy**, **RBAC** e **Docker**.
 - Docker Compose instalado
 
 ### **Execução Rápida**
+
+**Windows (PowerShell):**
+```powershell
+.\scripts\quick-start.ps1
+```
+
+**Linux/Mac:**
+```bash
+chmod +x scripts/quick-start.sh
+./scripts/quick-start.sh
+```
+
+**Ou manualmente:**
 ```bash
 # Construir e iniciar containers
 docker-compose up --build -d
@@ -155,6 +168,10 @@ npm run build            # Build produção
 - **Autenticação**: JWT, Passport
 - **Containerização**: Docker, Docker Compose
 - **Deploy**: Vercel (Frontend), Render (Backend)
+
+## 🔧 **Problemas?**
+
+Consulte o arquivo [TROUBLESHOOTING.md](TROUBLESHOOTING.md) para soluções de problemas comuns.
 
 ---
 

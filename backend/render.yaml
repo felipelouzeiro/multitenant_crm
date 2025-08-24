@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: fullstack-backend
+    name: multitenant-crm-backend
     env: node
     plan: free
     buildCommand: npm install && npm run build
@@ -32,7 +32,7 @@ services:
         generateValue: true
 
 databases:
-  - name: fullstack-postgres
-               databaseName: multitenant_crm
-    user: fullstack_user
+  - name: multitenant-crm-postgres
+    databaseName: multitenant_crm
+    user: multitenant_user
     plan: free

@@ -1,4 +1,4 @@
-# 🚀 Início Rápido - NN Fullstack App Nest-Next
+# 🚀 Início Rápido - MultiTenant CRM
 
 ## Execução Rápida com Docker
 
@@ -10,18 +10,24 @@
 
 **Windows (PowerShell):**
 ```powershell
-.\scripts\setup.ps1
+.\scripts\start.ps1
 ```
 
 **Linux/Mac:**
 ```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/quick-start.sh
+./scripts/quick-start.sh
 ```
 
 **Ou manualmente:**
 ```bash
+# 1. Construir e iniciar containers
 docker-compose up --build -d
+
+# 2. Aguardar containers iniciarem (30-40 segundos)
+# 3. Executar migrações e seed
+docker-compose exec -T backend npm run migration:run
+docker-compose exec -T backend npm run setup:db
 ```
 
 ### 3. Acessar a Aplicação

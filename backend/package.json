@@ -21,6 +21,7 @@
     "seed": "ts-node src/seed/seed.ts",
     "seed:clients": "ts-node src/seed/clients-seed.ts",
     "reset:db": "ts-node src/seed/reset-db.ts",
+    "setup:db": "ts-node src/seed/setup-db.ts",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
