@@ -23,7 +23,7 @@ export function Sidebar() {
   })
 
   return (
-    <div className="w-64 bg-white shadow-sm border-r border-gray-200">
+    <div className="w-64 bg-white shadow-sm border-r border-gray-200 h-screen">
       <nav className="mt-5 px-2">
         <div className="space-y-1">
           {filteredNavigation.map((item) => {

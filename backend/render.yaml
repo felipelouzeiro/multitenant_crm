@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: fullstack-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: fullstack-postgres
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: fullstack-postgres
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: fullstack-postgres
+          property: database
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: fullstack-postgres
+          property: username
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: fullstack-postgres
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+
+databases:
+  - name: fullstack-postgres
+    databaseName: fullstack_challenge
+    user: fullstack_user
+    plan: free

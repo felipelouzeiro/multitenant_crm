@@ -34,7 +34,8 @@ export class User {
   password: string;
 
   @Column({
-    type: 'varchar',
+    type: 'enum',
+    enum: UserRole,
     default: UserRole.GUEST,
   })
   role: UserRole;

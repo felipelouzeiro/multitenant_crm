@@ -1,64 +1,72 @@
-version: '3.8'
+
 
 services:
+  # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: fullstack-challenge-db
+    container_name: fullstack_postgres
     environment:
       POSTGRES_DB: fullstack_challenge
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres123
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - fullstack-network
+      - fullstack_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Backend API
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: fullstack-challenge-backend
+    container_name: fullstack_backend
     environment:
-      NODE_ENV: development
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-      DB_DATABASE: fullstack_challenge
+      NODE_ENV: production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: fullstack_challenge
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres123
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      FRONTEND_URL: http://localhost:3000
+      PORT: 3000
     ports:
-      - "3001:3001"
+      - "3001:3000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
-      - fullstack-network
+      - fullstack_network
     volumes:
       - ./backend:/app
       - /app/node_modules
+    command: npm run start:dev
 
+  # Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: fullstack-challenge-frontend
+    container_name: fullstack_frontend
     environment:
+      NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:3001
     ports:
       - "3000:3000"
     depends_on:
       - backend
     networks:
-      - fullstack-network
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - fullstack_network
 
 volumes:
   postgres_data:
 
 networks:
-  fullstack-network:
+  fullstack_network:
     driver: bridge

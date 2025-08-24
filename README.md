@@ -1,226 +1,192 @@
-# Fullstack Tech Challenge
+# 🚀 Fullstack Tech Challenge
 
-Aplicação fullstack desenvolvida com NextJS (frontend) e NestJS (backend), implementando autenticação JWT, RBAC (Role-Based Access Control), multitenancy e CRUD completo de clientes.
+Aplicação fullstack completa com **multitenancy**, **RBAC** e **Docker** para o desafio técnico.
 
-## 🚀 Tecnologias Utilizadas
+## 🏗️ **Arquitetura**
 
-### Backend
-- **NestJS** - Framework Node.js
-- **TypeScript** - Linguagem de programação
-- **TypeORM** - ORM para banco de dados
-- **PostgreSQL** - Banco de dados
-- **JWT** - Autenticação
-- **Passport** - Estratégias de autenticação
-- **Swagger** - Documentação da API
+- **Frontend**: NextJS 14 + TypeScript + TailwindCSS + React Query
+- **Backend**: NestJS + TypeScript + TypeORM + PostgreSQL
+- **Database**: PostgreSQL 15
+- **Containerização**: Docker + Docker Compose
+- **Autenticação**: JWT + Passport
+- **Multitenancy**: Isolamento completo por tenant
+- **RBAC**: ADMIN, USER, GUEST roles
 
-### Frontend
-- **NextJS 14** - Framework React
-- **TypeScript** - Linguagem de programação
-- **TailwindCSS** - Framework CSS
-- **React Query** - Gerenciamento de estado
-- **React Hook Form** - Formulários
-- **Lucide React** - Ícones
-- **Compound Component Pattern** - Padrão de componentes
+## 🐳 **Docker Setup (Recomendado)**
 
-## 🏗️ Arquitetura
+### **Pré-requisitos**
+- Docker Desktop instalado
+- Docker Compose instalado
 
-### Multitenancy
-- Cada tenant é identificado por um `tenantId`
-- Isolamento completo de dados por tenant
-- `tenantId` presente no token JWT
+### **Setup Rápido**
 
-### RBAC (Role-Based Access Control)
-- **ADMIN**: Pode cadastrar, editar e visualizar todos os usuários e clientes
-- **USER**: Pode cadastrar, editar e visualizar clientes, e apenas visualizar usuários
-- **GUEST**: Pode apenas visualizar a lista de clientes
-
-### Estrutura do Projeto
-```
-fullstask-tech-desafio/
-├── backend/                 # API NestJS
-│   ├── src/
-│   │   ├── auth/           # Autenticação e autorização
-│   │   ├── users/          # Gestão de usuários
-│   │   ├── clients/        # Gestão de clientes
-│   │   ├── dashboard/      # Estatísticas
-│   │   └── seed/           # Dados iniciais
-│   └── Dockerfile
-├── frontend/               # Aplicação NextJS
-│   ├── app/               # Páginas e rotas
-│   ├── components/        # Componentes React
-│   ├── contexts/          # Context API
-│   ├── lib/               # Utilitários e configurações
-│   └── Dockerfile
-└── docker-compose.yml     # Orquestração dos containers
+#### **Windows (PowerShell)**
+```powershell
+.\scripts\setup-docker.ps1
 ```
 
-## 🚀 Como Executar
-
-### Pré-requisitos
-- Docker e Docker Compose instalados
-- Node.js 18+ (para desenvolvimento local)
-
-### Execução com Docker (Recomendado)
-
-1. Clone o repositório:
+#### **Linux/Mac (Bash)**
 ```bash
-git clone <repository-url>
-cd fullstask-tech-desafio
+chmod +x scripts/setup-docker.sh
+./scripts/setup-docker.sh
 ```
 
-2. Execute com Docker Compose:
+#### **Manual**
 ```bash
-docker-compose up --build
+# Construir e iniciar containers
+docker-compose up --build -d
+
+# Verificar status
+docker-compose ps
+
+# Ver logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
 ```
 
-3. Acesse a aplicação:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
-- Swagger Docs: http://localhost:3001/api
+### **Acesso**
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:3001
+- **Database**: localhost:5432
 
-### Execução Local
+## 👤 **Usuários de Teste**
 
-#### Backend
+### **🏢 ACME (tenant-1)**
+- **Admin**: admin@acme.com / admin123
+- **User**: user@acme.com / user123
+- **Guest**: guest@acme.com / guest123
+
+### **🏢 GLOBEX (tenant-2)**
+- **Admin**: admin@globex.com / admin123
+- **User**: user@globex.com / user123
+- **Guest**: guest@globex.com / guest123
+
+### **🏢 INITECH (tenant-3)**
+- **Admin**: admin@initech.com / admin123
+- **User**: user@initech.com / user123
+- **Guest**: guest@initech.com / guest123
+
+## 🔐 **Funcionalidades**
+
+### **Multitenancy**
+- ✅ Isolamento completo de dados por tenant
+- ✅ JWT com tenantId e tenantName
+- ✅ Cache limpo ao trocar de tenant
+- ✅ Nome da empresa no header
+
+### **RBAC (Role-Based Access Control)**
+- **ADMIN**: CRUD completo de usuários e clientes
+- **USER**: CRUD clientes, visualizar usuários
+- **GUEST**: Apenas visualizar clientes
+
+### **CRUD Completo**
+- ✅ Usuários (criar, editar, deletar, listar)
+- ✅ Clientes (criar, editar, deletar, listar)
+- ✅ Validações de formulário
+- ✅ Busca e filtros
+- ✅ Dashboard com KPIs
+
+## 🛠️ **Desenvolvimento Local**
+
+### **Backend**
 ```bash
 cd backend
 npm install
 npm run start:dev
 ```
 
-#### Frontend
+### **Frontend**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## 👤 Usuários de Teste
-
-Após executar o projeto, você pode fazer login com os seguintes usuários:
-
-| Email | Senha | Role | Permissões |
-|-------|-------|------|------------|
-| admin@example.com | admin123 | ADMIN | Total acesso |
-| user@example.com | user123 | USER | Clientes + visualizar usuários |
-| guest@example.com | guest123 | GUEST | Apenas visualizar clientes |
-
-## 📋 Funcionalidades
-
-### Autenticação
-- ✅ Login com email e senha
-- ✅ JWT com refresh token
-- ✅ Proteção de rotas
-- ✅ Interceptor para renovação automática de token
-
-### Dashboard
-- ✅ Total de clientes registrados
-- ✅ Total de clientes ativos
-- ✅ Interface responsiva
-
-### Gestão de Clientes (CRUD)
-- ✅ Listagem com paginação
-- ✅ Criação de novos clientes
-- ✅ Edição de clientes existentes
-- ✅ Exclusão de clientes
-- ✅ Visualização detalhada
-
-### Gestão de Usuários (CRUD)
-- ✅ Listagem de usuários (ADMIN)
-- ✅ Criação de usuários (ADMIN)
-- ✅ Edição de usuários (ADMIN)
-- ✅ Exclusão de usuários (ADMIN)
-
-### Multitenancy
-- ✅ Isolamento de dados por tenant
-- ✅ Tenant ID no token JWT
-- ✅ Filtros automáticos por tenant
-
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-
-#### Backend (.env)
-```env
-NODE_ENV=development
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=password
-DB_DATABASE=fullstack_challenge
-JWT_SECRET=your-super-secret-jwt-key
-FRONTEND_URL=http://localhost:3000
+### **Database**
+```bash
+# Reset do banco
+cd backend
+npm run reset:db
 ```
 
-#### Frontend (.env.local)
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
+## 📁 **Estrutura do Projeto**
+
+```
+fullstack-tech-challenge/
+├── backend/                 # NestJS API
+│   ├── src/
+│   │   ├── auth/           # Autenticação JWT
+│   │   ├── users/          # CRUD Usuários
+│   │   ├── clients/        # CRUD Clientes
+│   │   ├── dashboard/      # KPIs
+│   │   └── seed/           # Dados de teste
+│   ├── Dockerfile
+│   └── package.json
+├── frontend/               # NextJS App
+│   ├── app/               # Páginas
+│   ├── components/        # Componentes React
+│   ├── contexts/          # Context API
+│   ├── lib/               # Utilitários
+│   ├── Dockerfile
+│   └── package.json
+├── scripts/               # Scripts de setup
+├── docker-compose.yml     # Orquestração Docker
+└── README.md
 ```
 
-## 📚 API Endpoints
+## 🚀 **Deploy**
 
-### Autenticação
-- `POST /auth/login` - Login
-- `POST /auth/refresh` - Renovar token
-- `GET /auth/profile` - Perfil do usuário
+### **Vercel (Frontend)**
+- Configurado para build standalone
+- Variáveis de ambiente para API URL
 
-### Usuários
-- `GET /users` - Listar usuários
-- `POST /users` - Criar usuário (ADMIN)
-- `GET /users/:id` - Obter usuário
-- `PATCH /users/:id` - Atualizar usuário (ADMIN)
-- `DELETE /users/:id` - Remover usuário (ADMIN)
+### **Render (Backend)**
+- PostgreSQL add-on
+- Build automático do Docker
 
-### Clientes
-- `GET /clients` - Listar clientes
-- `POST /clients` - Criar cliente (ADMIN/USER)
-- `GET /clients/:id` - Obter cliente
-- `PATCH /clients/:id` - Atualizar cliente (ADMIN/USER)
-- `DELETE /clients/:id` - Remover cliente (ADMIN/USER)
-
-### Dashboard
-- `GET /dashboard/stats` - Estatísticas
-
-## 🧪 Testes
-
-Para executar os testes:
+## 🔧 **Comandos Úteis**
 
 ```bash
+# Docker
+docker-compose up -d          # Iniciar containers
+docker-compose down           # Parar containers
+docker-compose restart        # Reiniciar containers
+docker-compose logs -f        # Ver logs
+
 # Backend
-cd backend
-npm run test
+npm run start:dev            # Desenvolvimento
+npm run build               # Build produção
+npm run reset:db            # Reset banco
 
 # Frontend
-cd frontend
-npm run test
+npm run dev                 # Desenvolvimento
+npm run build              # Build produção
 ```
 
-## 📦 Deploy
+## 📊 **Dashboard**
 
-### Produção
-```bash
-# Build das imagens
-docker-compose -f docker-compose.prod.yml up --build
+- Total de clientes por tenant
+- Clientes ativos por tenant
+- Gráficos e estatísticas
 
-# Ou com variáveis de ambiente customizadas
-docker-compose -f docker-compose.prod.yml --env-file .env.prod up --build
-```
+## 🔒 **Segurança**
 
-## 🤝 Contribuição
+- ✅ JWT com expiração
+- ✅ Senhas hasheadas (bcrypt)
+- ✅ Validação de entrada
+- ✅ Isolamento por tenant
+- ✅ RBAC implementado
+- ✅ CORS configurado
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+## 🎯 **Próximos Passos**
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido como parte do desafio técnico fullstack.
+- [ ] Testes automatizados
+- [ ] CI/CD pipeline
+- [ ] Monitoramento e logs
+- [ ] Backup automático
+- [ ] Rate limiting
+- [ ] Documentação API (Swagger)
 
 ---
 
-**Nota**: Esta aplicação foi desenvolvida seguindo as melhores práticas de desenvolvimento, incluindo organização de código limpa, padrões de design, e arquitetura escalável.
+**Desenvolvido com ❤️ para o desafio técnico fullstack**

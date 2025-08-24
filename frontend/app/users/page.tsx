@@ -225,19 +225,17 @@ export default function UsersPage() {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2 text-sm">
-                        <p><strong>ID:</strong> {userItem.id}</p>
-                        <p><strong>Role:</strong> 
-                          <span className={`ml-1 px-2 py-1 rounded text-xs ${getRoleColor(userItem.role)}`}>
-                            {userItem.role}
-                          </span>
-                        </p>
-                        <p><strong>Tenant ID:</strong> {userItem.tenantId}</p>
-                        <p><strong>Criado em:</strong> {new Date(userItem.createdAt).toLocaleDateString('pt-BR')}</p>
-                        <p><strong>Atualizado em:</strong> {new Date(userItem.updatedAt).toLocaleDateString('pt-BR')}</p>
-                      </div>
-                    </CardContent>
+                                         <CardContent>
+                       <div className="space-y-2 text-sm">
+                         <p><strong>Role:</strong> 
+                           <span className={`ml-1 px-2 py-1 rounded text-xs ${getRoleColor(userItem.role)}`}>
+                             {userItem.role}
+                           </span>
+                         </p>
+                         <p><strong>Criado em:</strong> {new Date(userItem.createdAt).toLocaleDateString('pt-BR')}</p>
+                         <p><strong>Atualizado em:</strong> {new Date(userItem.updatedAt).toLocaleDateString('pt-BR')}</p>
+                       </div>
+                     </CardContent>
                   </Card>
                 ))}
               </div>
