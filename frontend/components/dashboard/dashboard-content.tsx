@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, UserCheck } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 interface DashboardStats {
   total: number;
@@ -11,12 +12,15 @@ interface DashboardStats {
 }
 
 export function DashboardContent() {
+  const { user } = useAuth();
+  
   const { data: stats, isLoading, error } = useQuery<DashboardStats>({
-    queryKey: ['dashboard-stats'],
+    queryKey: ['dashboard-stats', user?.tenantId],
     queryFn: async () => {
       const response = await api.get('/dashboard/stats');
       return response.data;
     },
+    enabled: !!user?.tenantId,
   });
 
   if (isLoading) {

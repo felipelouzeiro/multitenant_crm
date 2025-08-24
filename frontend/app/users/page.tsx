@@ -46,11 +46,12 @@ export default function UsersPage() {
   }, [user, isLoading, router]);
 
   const { data: users, isLoading: loadingUsers } = useQuery<User[]>({
-    queryKey: ['users'],
+    queryKey: ['users', user?.tenantId],
     queryFn: async () => {
       const response = await api.get('/users')
       return response.data
     },
+    enabled: !!user?.tenantId,
   });
 
   const deleteMutation = useMutation({
@@ -58,7 +59,7 @@ export default function UsersPage() {
       await api.delete(`/users/${userId}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['users', user?.tenantId] })
       toast.success('Usuário removido com sucesso!')
     },
     onError: () => {
@@ -82,7 +83,7 @@ export default function UsersPage() {
       await api.patch(`/users/${id}`, data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['users', user?.tenantId] })
       toast.success('Usuário atualizado com sucesso!')
       setEditingUser(null)
       setErrors({})
@@ -105,7 +106,7 @@ export default function UsersPage() {
       await api.post('/users', userData)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['users', user?.tenantId] })
       toast.success('Usuário criado com sucesso!')
       setShowCreateModal(false)
       setNewUser({ name: '', email: '', password: '', role: 'USER' })

@@ -60,11 +60,12 @@ export default function ClientsPage() {
   }, [user, isLoading, router])
 
   const { data: clients, isLoading: loadingClients } = useQuery<Client[]>({
-    queryKey: ['clients'],
+    queryKey: ['clients', user?.tenantId],
     queryFn: async () => {
       const response = await api.get('/clients')
       return response.data
     },
+    enabled: !!user?.tenantId,
   })
 
   const deleteMutation = useMutation({
@@ -72,7 +73,7 @@ export default function ClientsPage() {
       await api.delete(`/clients/${clientId}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: ['clients', user?.tenantId] })
       toast.success('Cliente removido com sucesso!')
     },
     onError: () => {
@@ -96,7 +97,7 @@ export default function ClientsPage() {
       await api.patch(`/clients/${id}`, data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: ['clients', user?.tenantId] })
       toast.success('Cliente atualizado com sucesso!')
       setEditingClient(null)
       setErrors({})
@@ -119,7 +120,7 @@ export default function ClientsPage() {
       await api.post('/clients', clientData)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: ['clients', user?.tenantId] })
       toast.success('Cliente criado com sucesso!')
       setShowCreateModal(false)
       setNewClient({

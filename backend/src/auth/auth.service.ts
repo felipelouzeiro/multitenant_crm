@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
+import { getTenantName } from '../common/constants/tenants';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -30,7 +31,8 @@ export class AuthService {
       email: user.email, 
       sub: user.id, 
       role: user.role,
-      tenantId: user.tenantId 
+      tenantId: user.tenantId,
+      tenantName: getTenantName(user.tenantId)
     };
 
     const accessToken = this.jwtService.sign(payload);
@@ -47,6 +49,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         tenantId: user.tenantId,
+        tenantName: getTenantName(user.tenantId),
       },
     };
   }
@@ -64,7 +67,8 @@ export class AuthService {
         email: user.email, 
         sub: user.id, 
         role: user.role,
-        tenantId: user.tenantId 
+        tenantId: user.tenantId,
+        tenantName: getTenantName(user.tenantId)
       };
 
       const accessToken = this.jwtService.sign(newPayload);

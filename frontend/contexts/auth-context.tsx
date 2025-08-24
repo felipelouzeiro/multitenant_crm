@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { api } from '@/lib/api'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface User {
   id: string
@@ -9,6 +10,7 @@ interface User {
   email: string
   role: 'ADMIN' | 'USER' | 'GUEST'
   tenantId: string
+  tenantName: string
 }
 
 interface AuthContextType {
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -53,6 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('refresh_token', refresh_token);
     api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     
+    // Limpar cache do React Query ao trocar de tenant
+    queryClient.clear();
+    
     setUser(user);
   }
 
@@ -60,6 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     delete api.defaults.headers.common['Authorization'];
+    
+    // Limpar cache do React Query ao fazer logout
+    queryClient.clear();
+    
     setUser(null);
   }
 

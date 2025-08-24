@@ -20,33 +20,71 @@ async function resetDatabase() {
     
     // Criar usuários
     const users = [
+      // Tenant 1 - ACME
       {
-        name: 'Administrador',
-        email: 'admin@example.com',
+        name: 'Admin ACME',
+        email: 'admin@acme.com',
         password: 'admin123',
         role: UserRole.ADMIN,
         tenantId: 'tenant-1',
       },
       {
-        name: 'Usuário Normal',
-        email: 'user@example.com',
+        name: 'User ACME',
+        email: 'user@acme.com',
         password: 'user123',
         role: UserRole.USER,
         tenantId: 'tenant-1',
       },
       {
-        name: 'Usuário Normal 2',
-        email: 'user2@example.com',
-        password: 'user2123',
+        name: 'Guest ACME',
+        email: 'guest@acme.com',
+        password: 'guest123',
+        role: UserRole.GUEST,
+        tenantId: 'tenant-1',
+      },
+      // Tenant 2 - GLOBEX
+      {
+        name: 'Admin GLOBEX',
+        email: 'admin@globex.com',
+        password: 'admin123',
+        role: UserRole.ADMIN,
+        tenantId: 'tenant-2',
+      },
+      {
+        name: 'User GLOBEX',
+        email: 'user@globex.com',
+        password: 'user123',
         role: UserRole.USER,
         tenantId: 'tenant-2',
       },
       {
-        name: 'Convidado',
-        email: 'guest@example.com',
+        name: 'Guest GLOBEX',
+        email: 'guest@globex.com',
         password: 'guest123',
         role: UserRole.GUEST,
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
+      },
+      // Tenant 3 - INITECH
+      {
+        name: 'Admin INITECH',
+        email: 'admin@initech.com',
+        password: 'admin123',
+        role: UserRole.ADMIN,
+        tenantId: 'tenant-3',
+      },
+      {
+        name: 'User INITECH',
+        email: 'user@initech.com',
+        password: 'user123',
+        role: UserRole.USER,
+        tenantId: 'tenant-3',
+      },
+      {
+        name: 'Guest INITECH',
+        email: 'guest@initech.com',
+        password: 'guest123',
+        role: UserRole.GUEST,
+        tenantId: 'tenant-3',
       },
     ];
 
@@ -56,9 +94,10 @@ async function resetDatabase() {
 
     // Criar clientes
     const clients = [
+      // Tenant 1 - ACME
       {
         name: 'João Silva',
-        email: 'joao.silva@example.com',
+        email: 'joao.silva@acme.com',
         isActive: true,
         contact: '(11) 99999-1111',
         address: {
@@ -68,11 +107,11 @@ async function resetDatabase() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/joao.jpg',
-        tenantId: 'tenant-2',
+        tenantId: 'tenant-1',
       },
       {
         name: 'Maria Santos',
-        email: 'maria.santos@example.com',
+        email: 'maria.santos@acme.com',
         isActive: true,
         contact: '(11) 99999-2222',
         address: {
@@ -86,7 +125,7 @@ async function resetDatabase() {
       },
       {
         name: 'Pedro Oliveira',
-        email: 'pedro.oliveira@example.com',
+        email: 'pedro.oliveira@acme.com',
         isActive: false,
         contact: '(11) 99999-3333',
         address: {
@@ -98,9 +137,10 @@ async function resetDatabase() {
         imageUrl: 'https://example.com/pedro.jpg',
         tenantId: 'tenant-1',
       },
+      // Tenant 2 - GLOBEX
       {
         name: 'Ana Costa',
-        email: 'ana.costa@example.com',
+        email: 'ana.costa@globex.com',
         isActive: true,
         contact: '(11) 99999-4444',
         address: {
@@ -114,7 +154,7 @@ async function resetDatabase() {
       },
       {
         name: 'Carlos Ferreira',
-        email: 'carlos.ferreira@example.com',
+        email: 'carlos.ferreira@globex.com',
         isActive: true,
         contact: '(11) 99999-5555',
         address: {
@@ -124,7 +164,50 @@ async function resetDatabase() {
           state: 'SP'
         },
         imageUrl: 'https://example.com/carlos.jpg',
-        tenantId: 'tenant-1',
+        tenantId: 'tenant-2',
+      },
+      {
+        name: 'Lucia Mendes',
+        email: 'lucia.mendes@globex.com',
+        isActive: true,
+        contact: '(11) 99999-6666',
+        address: {
+          street: 'Rua Pamplona',
+          neighborhood: 'Jardins',
+          number: '987',
+          state: 'SP'
+        },
+        imageUrl: 'https://example.com/lucia.jpg',
+        tenantId: 'tenant-2',
+      },
+      // Tenant 3 - INITECH
+      {
+        name: 'Roberto Alves',
+        email: 'roberto.alves@initech.com',
+        isActive: true,
+        contact: '(11) 99999-7777',
+        address: {
+          street: 'Rua Bela Cintra',
+          neighborhood: 'Consolação',
+          number: '555',
+          state: 'SP'
+        },
+        imageUrl: 'https://example.com/roberto.jpg',
+        tenantId: 'tenant-3',
+      },
+      {
+        name: 'Fernanda Lima',
+        email: 'fernanda.lima@initech.com',
+        isActive: false,
+        contact: '(11) 99999-8888',
+        address: {
+          street: 'Rua Teodoro Sampaio',
+          neighborhood: 'Pinheiros',
+          number: '777',
+          state: 'SP'
+        },
+        imageUrl: 'https://example.com/fernanda.jpg',
+        tenantId: 'tenant-3',
       }
     ];
 
@@ -133,10 +216,22 @@ async function resetDatabase() {
     }
 
     console.log('✅ Reset do banco concluído!');
-    console.log('👤 Usuários de teste:');
-    console.log('   Admin: admin@example.com / admin123');
-    console.log('   User: user@example.com / user123');
-    console.log('   Guest: guest@example.com / guest123');
+    console.log('👤 Usuários de teste por Tenant:');
+    console.log('');
+    console.log('🏢 ACME (tenant-1):');
+    console.log('   Admin: admin@acme.com / admin123');
+    console.log('   User: user@acme.com / user123');
+    console.log('   Guest: guest@acme.com / guest123');
+    console.log('');
+    console.log('🏢 GLOBEX (tenant-2):');
+    console.log('   Admin: admin@globex.com / admin123');
+    console.log('   User: user@globex.com / user123');
+    console.log('   Guest: guest@globex.com / guest123');
+    console.log('');
+    console.log('🏢 INITECH (tenant-3):');
+    console.log('   Admin: admin@initech.com / admin123');
+    console.log('   User: user@initech.com / user123');
+    console.log('   Guest: guest@initech.com / guest123');
   } catch (error) {
     console.error('❌ Erro ao resetar banco:', error.message);
   } finally {
