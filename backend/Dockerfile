@@ -5,7 +5,7 @@ WORKDIR /app
 # Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar todas as dependências (incluindo devDependencies para builds)
+# Instalar todas as dependências (incluindo devDependencies para build)
 RUN npm ci
 
 # Copiar código fonte
