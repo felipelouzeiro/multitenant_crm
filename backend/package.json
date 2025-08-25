@@ -25,7 +25,7 @@
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
-    "postinstall": "echo 'Skipping postinstall in Docker build'",
+    "postinstall": "if [ \"$NODE_ENV\" = \"production\" ]; then npm run migration:run && npm run setup:db; else echo 'Skipping postinstall in development'; fi",
     "setup:prod": "npm run migration:run && npm run setup:db"
   },
   "dependencies": {
