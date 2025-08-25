@@ -197,18 +197,18 @@ export default function UsersPage() {
                   <Card key={userItem.id}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{userItem.name}</CardTitle>
-                          <CardDescription>{userItem.email}</CardDescription>
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg truncate">{userItem.name}</CardTitle>
+                          <CardDescription className="truncate">{userItem.email}</CardDescription>
                         </div>
-                        <div className="flex gap-2">
-
+                        <div className="flex gap-1 ml-2 flex-shrink-0">
                           {user.role === 'ADMIN' && (
                             <>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setEditingUser(userItem)}
+                                className="h-8 w-8 p-0"
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -217,6 +217,7 @@ export default function UsersPage() {
                                 size="sm"
                                 onClick={() => deleteMutation.mutate(userItem.id)}
                                 disabled={deleteMutation.isPending}
+                                className="h-8 w-8 p-0"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

@@ -204,17 +204,18 @@ export default function ClientsPage() {
                   <Card key={client.id}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{client.name}</CardTitle>
-                          <CardDescription>{client.email}</CardDescription>
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg truncate">{client.name}</CardTitle>
+                          <CardDescription className="truncate">{client.email}</CardDescription>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 ml-2 flex-shrink-0">
                           {(user.role === 'ADMIN' || user.role === 'USER') && (
                             <>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setEditingClient(client)}
+                                className="h-8 w-8 p-0"
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -223,6 +224,7 @@ export default function ClientsPage() {
                                 size="sm"
                                 onClick={() => deleteMutation.mutate(client.id)}
                                 disabled={deleteMutation.isPending}
+                                className="h-8 w-8 p-0"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
